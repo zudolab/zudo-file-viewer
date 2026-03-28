@@ -2,7 +2,9 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { SettingsProvider, useSettings } from "@/settings-context";
 import { FileTree } from "@/components/file-tree";
 import { Viewer } from "@/components/viewer";
+import { Toast } from "@/components/toast";
 import { useDirectory } from "@/hooks/use-directory";
+import { useDirectoryWatcher } from "@/hooks/use-directory-watcher";
 import type { FileEntry } from "@/types";
 import { isImageExtension, isHeicExtension } from "@/types";
 
@@ -12,7 +14,8 @@ function AppContent() {
   const [currentDir, setCurrentDir] = useState<string>(
     settings.rootDirectory || "/",
   );
-  const { entries } = useDirectory(currentDir);
+  const { entries, refresh } = useDirectory(currentDir);
+  const watcher = useDirectoryWatcher(currentDir, refresh);
 
   // Sync currentDir when settings.rootDirectory becomes available after async load
   const initialSyncDone = useRef(false);
@@ -51,6 +54,16 @@ function AppContent() {
 
   return (
     <div className="flex h-full flex-col">
+      {watcher.hasChanges && (
+        <Toast
+          message="Directory contents changed on disk."
+          actions={[
+            { label: "Reload", onClick: watcher.reload, primary: true },
+            { label: "Dismiss", onClick: watcher.dismiss },
+          ]}
+        />
+      )}
+
       {/* Toolbar */}
       <div className="flex h-[var(--toolbar-height)] shrink-0 items-center gap-md border-b border-edge bg-base-alt px-lg">
         <span className="text-sm font-semibold text-fg">zudo-file-viewer</span>
