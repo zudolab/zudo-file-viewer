@@ -1,0 +1,8 @@
+node_modules/
+dist/
+dist-renderer/
+target/
+worktrees/
+*.log
+.DS_Store
+__inbox/
