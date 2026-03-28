@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import type { BackendAPI } from "./types";
+import type { BackendAPI, ImageDataResponse } from "./types";
 import type { AppSettings, FileEntry, FileInfo } from "@/types";
 
 export function createTauriAdapter(): BackendAPI {
@@ -26,8 +27,13 @@ export function createTauriAdapter(): BackendAPI {
     images: {
       getThumbnail: (path: string, size: number) =>
         invoke<string>("get_thumbnail", { path, size }),
-      getImageData: (path: string) =>
-        invoke<string>("get_image_data", { path }),
+      getImageData: async (path: string) => {
+        const resp = await invoke<ImageDataResponse>("get_image_data", {
+          path,
+        });
+        if (resp.type === "base64") return resp.data;
+        return convertFileSrc(resp.path);
+      },
       getImageDimensions: (path: string) =>
         invoke<{ width: number; height: number }>("get_image_dimensions", {
           path,

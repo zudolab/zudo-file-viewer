@@ -16,7 +16,7 @@ export interface FileInfo extends FileEntry {
 
 export interface AppSettings {
   rootDirectory: string;
-  showHiddenFiles: boolean;
+  showHidden: boolean;
   sortBy: "name" | "date" | "size" | "type";
   sortOrder: "asc" | "desc";
   viewMode: "grid" | "list";
@@ -25,7 +25,7 @@ export interface AppSettings {
 
 export const defaultSettings: AppSettings = {
   rootDirectory: "",
-  showHiddenFiles: false,
+  showHidden: false,
   sortBy: "name",
   sortOrder: "asc",
   viewMode: "grid",

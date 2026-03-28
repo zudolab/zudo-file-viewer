@@ -1,16 +1,44 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { SettingsProvider, useSettings } from "@/settings-context";
 import { FileTree } from "@/components/file-tree";
 import { Viewer } from "@/components/viewer";
 import { useDirectory } from "@/hooks/use-directory";
+import type { FileEntry } from "@/types";
 
 function AppContent() {
   const settings = useSettings();
-  const [selectedPath, setSelectedPath] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<FileEntry | null>(null);
   const [currentDir, setCurrentDir] = useState<string>(
     settings.rootDirectory || "/",
   );
   const { entries } = useDirectory(currentDir);
+
+  const handleFileSelect = useCallback(
+    (path: string) => {
+      // Try current directory entries first, then fall back to a backend lookup
+      const found = entries.find((e) => e.path === path);
+      if (found) {
+        setSelectedFile(found);
+      } else {
+        // File is in a nested directory — create a minimal FileEntry from path
+        const name = path.split("/").pop() ?? path;
+        const ext = name.includes(".") ? name.split(".").pop()?.toLowerCase() ?? "" : "";
+        const imageExts = new Set(["jpg","jpeg","png","gif","webp","bmp","svg","tiff","tif","ico","avif","heic","heif"]);
+        const heicExts = new Set(["heic","heif"]);
+        setSelectedFile({
+          name,
+          path,
+          fileType: "file",
+          size: 0,
+          modifiedAt: "",
+          extension: ext,
+          isImage: imageExts.has(ext),
+          isHeic: heicExts.has(ext),
+        });
+      }
+    },
+    [entries],
+  );
 
   return (
     <div className="flex h-full flex-col">
@@ -28,8 +56,8 @@ function AppContent() {
         <div className="w-[var(--sidebar-width)] shrink-0 overflow-y-auto border-r border-edge bg-base">
           <FileTree
             rootPath={currentDir}
-            selectedPath={selectedPath}
-            onSelect={setSelectedPath}
+            selectedPath={selectedFile?.path ?? null}
+            onSelect={handleFileSelect}
             onDirectoryChange={setCurrentDir}
           />
         </div>
@@ -37,12 +65,12 @@ function AppContent() {
         {/* Viewer */}
         <div className="min-w-0 flex-1 overflow-y-auto bg-base-alt">
           <Viewer
-            selectedFile={entries.find((e) => e.path === selectedPath) ?? null}
+            selectedFile={selectedFile}
             currentDir={currentDir}
             entries={entries}
             viewMode={settings.viewMode}
             onDirectoryChange={setCurrentDir}
-            onSelect={setSelectedPath}
+            onSelect={handleFileSelect}
           />
         </div>
       </div>
