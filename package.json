@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "tauri:dev": "cargo tauri dev",
-    "tauri:build": "cargo tauri build"
+    "tauri:build": "cargo tauri build",
+    "b4push": "./scripts/run-b4push.sh"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",
