@@ -11,6 +11,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::files::list_directory,
             commands::files::get_file_info,
+            commands::files::watch_directory,
+            commands::files::unwatch_directory,
             commands::images::get_thumbnail,
             commands::images::get_image_data,
             commands::images::get_image_dimensions,
