@@ -96,7 +96,7 @@ describe("FileTree", () => {
         rootPath="/root"
         selectedPath={null}
         onSelect={vi.fn()}
-        onDirectoryChange={vi.fn()}
+
       />,
     );
 
@@ -107,14 +107,11 @@ describe("FileTree", () => {
       expect(screen.getByText("doc.txt")).toBeDefined();
     });
 
-    // Directories should appear before files (sorted)
-    const items = screen
-      .getAllByRole("button")
-      .filter((btn) => btn.textContent !== "");
-    const labels = items.map((el) => el.textContent?.trim());
-    const photosIdx = labels.indexOf("photos");
-    const imageIdx = labels.indexOf("image.jpg");
-    expect(photosIdx).toBeLessThan(imageIdx!);
+    // Directories should appear before files in the DOM
+    const allText = document.body.textContent ?? "";
+    const photosPos = allText.indexOf("photos");
+    const imagePos = allText.indexOf("image.jpg");
+    expect(photosPos).toBeLessThan(imagePos);
   });
 
   it("expands directory on click and loads children", async () => {
@@ -123,7 +120,7 @@ describe("FileTree", () => {
         rootPath="/root"
         selectedPath={null}
         onSelect={vi.fn()}
-        onDirectoryChange={vi.fn()}
+
       />,
     );
 
@@ -152,7 +149,7 @@ describe("FileTree", () => {
         rootPath="/root"
         selectedPath={null}
         onSelect={onSelect}
-        onDirectoryChange={vi.fn()}
+
       />,
     );
 
@@ -171,7 +168,7 @@ describe("FileTree", () => {
         rootPath="/root"
         selectedPath={null}
         onSelect={vi.fn()}
-        onDirectoryChange={vi.fn()}
+
       />,
     );
 
@@ -195,7 +192,7 @@ describe("FileTree", () => {
         rootPath="/root"
         selectedPath="/root/image.jpg"
         onSelect={vi.fn()}
-        onDirectoryChange={vi.fn()}
+
       />,
     );
 

@@ -27,7 +27,6 @@ export interface FileTreeProps {
   rootPath: string;
   selectedPath: string | null;
   onSelect: (path: string) => void;
-  onDirectoryChange: (path: string) => void;
 }
 
 // --- Session storage persistence ---
@@ -408,6 +407,7 @@ function FileNode({
             : "text-muted hover:underline focus:underline"
         }`}
         style={{ paddingLeft }}
+        role="treeitem"
         aria-selected={isSelected}
       >
         <FileNodeIcon node={node} isSelected={isSelected} />

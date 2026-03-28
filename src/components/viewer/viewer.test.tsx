@@ -38,7 +38,6 @@ vi.mock("@/settings-context", () => ({
     showHiddenFiles: false,
     sortBy: "name" as const,
     sortOrder: "asc" as const,
-    viewMode: "grid" as const,
     thumbnailSize: 120,
   }),
 }));
@@ -64,9 +63,9 @@ describe("Viewer", () => {
     render(
       <Viewer
         selectedFile={null}
-        currentDir="/mock"
+
         entries={[]}
-        viewMode="grid"
+
       />,
     );
     expect(screen.getByText("Select a file to preview")).toBeTruthy();
@@ -80,9 +79,9 @@ describe("Viewer", () => {
     render(
       <Viewer
         selectedFile={null}
-        currentDir="/mock"
+
         entries={entries}
-        viewMode="grid"
+
       />,
     );
     expect(screen.getByText("photo.jpg")).toBeTruthy();
@@ -100,9 +99,9 @@ describe("Viewer", () => {
     render(
       <Viewer
         selectedFile={imageFile}
-        currentDir="/mock"
+
         entries={[imageFile]}
-        viewMode="grid"
+
       />,
     );
     // Should show loading initially
@@ -121,9 +120,9 @@ describe("Viewer", () => {
     render(
       <Viewer
         selectedFile={heicFile}
-        currentDir="/mock"
+
         entries={[heicFile]}
-        viewMode="grid"
+
       />,
     );
     expect(screen.getByText("Converting HEIC image…")).toBeTruthy();
@@ -139,9 +138,9 @@ describe("Viewer", () => {
     render(
       <Viewer
         selectedFile={txtFile}
-        currentDir="/mock"
+
         entries={[txtFile]}
-        viewMode="grid"
+
       />,
     );
     expect(screen.getByText("readme.txt")).toBeTruthy();
@@ -163,9 +162,9 @@ describe("Viewer", () => {
     render(
       <Viewer
         selectedFile={dirEntry}
-        currentDir="/mock"
+
         entries={entries}
-        viewMode="grid"
+
       />,
     );
     expect(screen.getByText("photos")).toBeTruthy();

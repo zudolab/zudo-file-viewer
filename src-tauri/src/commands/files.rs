@@ -70,10 +70,14 @@ fn build_file_entry(
     metadata: &fs::Metadata,
     extension: String,
 ) -> FileEntry {
-    let file_type = if metadata.is_dir() {
+    let file_type = if metadata.is_symlink() {
+        // Follow the symlink to determine the target type
+        match fs::metadata(&full_path) {
+            Ok(target_meta) if target_meta.is_dir() => "directory",
+            _ => "symlink",
+        }
+    } else if metadata.is_dir() {
         "directory"
-    } else if metadata.is_symlink() {
-        "symlink"
     } else {
         "file"
     };

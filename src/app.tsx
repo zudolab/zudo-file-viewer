@@ -58,7 +58,6 @@ function AppContent() {
             rootPath={currentDir}
             selectedPath={selectedFile?.path ?? null}
             onSelect={handleFileSelect}
-            onDirectoryChange={setCurrentDir}
           />
         </div>
 
@@ -66,9 +65,7 @@ function AppContent() {
         <div className="min-w-0 flex-1 overflow-y-auto bg-base-alt">
           <Viewer
             selectedFile={selectedFile}
-            currentDir={currentDir}
             entries={entries}
-            viewMode={settings.viewMode}
             onDirectoryChange={setCurrentDir}
             onSelect={handleFileSelect}
           />

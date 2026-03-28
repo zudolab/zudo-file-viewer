@@ -8,18 +8,14 @@ const NOOP = () => {};
 
 export interface ViewerProps {
   selectedFile: FileEntry | null;
-  currentDir: string;
   entries: FileEntry[];
-  viewMode: "grid" | "list";
   onDirectoryChange?: (path: string) => void;
   onSelect?: (path: string) => void;
 }
 
 export default function Viewer({
   selectedFile,
-  currentDir: _currentDir,
   entries,
-  viewMode: _viewMode,
   onDirectoryChange = NOOP,
   onSelect = NOOP,
 }: ViewerProps) {

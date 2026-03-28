@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import type { FileEntry } from "@/types";
 import { getBackend } from "@/backend";
 
@@ -46,7 +46,7 @@ interface ThumbnailItemProps {
   onDirectoryChange: (path: string) => void;
 }
 
-function ThumbnailItem({
+const ThumbnailItem = memo(function ThumbnailItem({
   entry,
   size,
   selected,
@@ -74,7 +74,7 @@ function ThumbnailItem({
       <span className="w-full truncate text-xs">{entry.name}</span>
     </button>
   );
-}
+});
 
 interface ThumbnailContentProps {
   entry: FileEntry;
