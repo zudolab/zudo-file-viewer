@@ -208,8 +208,8 @@ export default function FileTree({
 
   return (
     <nav className="h-full overflow-y-auto" aria-label="File tree">
-      <div className="px-sm py-xs">
-        <div className="flex items-center gap-xs rounded-md bg-surface px-sm py-2xs">
+      <div className="px-hsp-sm py-vsp-xs">
+        <div className="flex items-center gap-hsp-xs rounded bg-surface px-hsp-sm py-vsp-2xs">
           <svg
             className="h-[14px] w-[14px] shrink-0 text-muted"
             fill="none"
@@ -230,7 +230,7 @@ export default function FileTree({
             placeholder="Filter..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-transparent text-sm text-fg outline-none placeholder:text-muted"
+            className="w-full bg-transparent text-small outline-none text-fg placeholder:text-muted"
           />
         </div>
       </div>
@@ -341,7 +341,7 @@ function DirectoryNode({
         <button
           type="button"
           onClick={() => onToggle(node.path)}
-          className="flex w-full items-center gap-xs py-xs text-sm font-semibold text-fg hover:bg-surface"
+          className="flex w-full items-center gap-hsp-xs py-vsp-xs text-small font-semibold text-fg hover:underline focus:underline"
           style={{ paddingLeft }}
           aria-expanded={isExpanded}
           aria-label={
@@ -367,7 +367,7 @@ function DirectoryNode({
           />
           {!node.isLoaded && (
             <div
-              className="py-2xs text-xs text-muted"
+              className="py-vsp-2xs text-caption text-muted"
               style={{ paddingLeft: padLeft(depth + 1) }}
             >
               Loading...
@@ -402,10 +402,10 @@ function FileNode({
       <button
         type="button"
         onClick={() => onSelect(node.path)}
-        className={`flex w-full items-center gap-xs py-2xs text-sm ${
+        className={`flex w-full items-center gap-hsp-xs py-vsp-2xs text-small ${
           isSelected
-            ? "bg-accent font-medium text-on-accent"
-            : "text-muted hover:bg-surface"
+            ? "bg-fg font-medium text-bg"
+            : "text-muted hover:underline focus:underline"
         }`}
         style={{ paddingLeft }}
         aria-selected={isSelected}
@@ -427,8 +427,8 @@ function FileNodeIcon({
 }) {
   if (node.isImage) {
     return (
-      <ImageIcon className={isSelected ? "text-on-accent" : "text-accent"} />
+      <ImageIcon className={isSelected ? "text-bg" : "text-accent"} />
     );
   }
-  return <FileIcon className={isSelected ? "text-on-accent" : "text-muted"} />;
+  return <FileIcon className={isSelected ? "text-bg" : "text-muted"} />;
 }
