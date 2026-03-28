@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import type { FileEntry } from "@/types";
 import { getBackend } from "@/backend";
 
+const directoryCache = new Map<string, FileEntry[]>();
+
 interface UseDirectoryResult {
   entries: FileEntry[];
   loading: boolean;
@@ -14,24 +16,68 @@ export function useDirectory(path: string): UseDirectoryResult {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadDirectory = useCallback(async () => {
+  useEffect(() => {
     if (!path) return;
+    let cancelled = false;
+
+    const cached = directoryCache.get(path);
+    if (cached) {
+      setEntries(cached);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
     setLoading(true);
     setError(null);
-    try {
-      const result = await getBackend().files.listDirectory(path);
-      setEntries(result);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-      setEntries([]);
-    } finally {
-      setLoading(false);
-    }
+    getBackend()
+      .files.listDirectory(path)
+      .then((result) => {
+        if (cancelled) return;
+        directoryCache.set(path, result);
+        setEntries(result);
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        setError(e instanceof Error ? e.message : String(e));
+        setEntries([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [path]);
 
-  useEffect(() => {
-    loadDirectory();
-  }, [loadDirectory]);
+  const refresh = useCallback(() => {
+    if (!path) return;
+    directoryCache.delete(path);
+    setLoading(true);
+    setError(null);
+    getBackend()
+      .files.listDirectory(path)
+      .then((result) => {
+        directoryCache.set(path, result);
+        setEntries(result);
+      })
+      .catch((e) => {
+        setError(e instanceof Error ? e.message : String(e));
+        setEntries([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [path]);
 
-  return { entries, loading, error, refresh: loadDirectory };
+  return { entries, loading, error, refresh };
+}
+
+export function clearDirectoryCache(path?: string): void {
+  if (path) {
+    directoryCache.delete(path);
+  } else {
+    directoryCache.clear();
+  }
 }
