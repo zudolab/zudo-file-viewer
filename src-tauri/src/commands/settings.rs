@@ -15,10 +15,12 @@ fn settings_path() -> PathBuf {
 /// Default settings generated when no settings file exists yet.
 fn default_settings() -> serde_json::Value {
     serde_json::json!({
+        "rootDirectory": "",
         "showHidden": false,
         "sortBy": "name",
         "sortOrder": "asc",
-        "thumbnailSize": 200
+        "viewMode": "grid",
+        "thumbnailSize": 120
     })
 }
 

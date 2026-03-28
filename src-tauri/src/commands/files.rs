@@ -120,7 +120,7 @@ pub fn list_directory(
             Ok(e) => e,
             Err(_) => continue,
         };
-        let metadata = match entry.metadata() {
+        let metadata = match entry.path().symlink_metadata() {
             Ok(m) => m,
             Err(_) => continue,
         };

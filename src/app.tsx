@@ -4,6 +4,7 @@ import { FileTree } from "@/components/file-tree";
 import { Viewer } from "@/components/viewer";
 import { useDirectory } from "@/hooks/use-directory";
 import type { FileEntry } from "@/types";
+import { isImageExtension, isHeicExtension } from "@/types";
 
 function AppContent() {
   const settings = useSettings();
@@ -15,16 +16,15 @@ function AppContent() {
 
   const handleFileSelect = useCallback(
     (path: string) => {
-      // Try current directory entries first, then fall back to a backend lookup
       const found = entries.find((e) => e.path === path);
       if (found) {
         setSelectedFile(found);
       } else {
         // File is in a nested directory — create a minimal FileEntry from path
         const name = path.split("/").pop() ?? path;
-        const ext = name.includes(".") ? name.split(".").pop()?.toLowerCase() ?? "" : "";
-        const imageExts = new Set(["jpg","jpeg","png","gif","webp","bmp","svg","tiff","tif","ico","avif","heic","heif"]);
-        const heicExts = new Set(["heic","heif"]);
+        const ext = name.includes(".")
+          ? (name.split(".").pop()?.toLowerCase() ?? "")
+          : "";
         setSelectedFile({
           name,
           path,
@@ -32,8 +32,8 @@ function AppContent() {
           size: 0,
           modifiedAt: "",
           extension: ext,
-          isImage: imageExts.has(ext),
-          isHeic: heicExts.has(ext),
+          isImage: isImageExtension(ext),
+          isHeic: isHeicExtension(ext),
         });
       }
     },
