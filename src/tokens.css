@@ -1,0 +1,122 @@
+/* ============================================
+   Design Tokens — zudo-file-viewer
+   Three-tier color system + spacing/typography
+   ============================================ */
+
+@theme {
+  /* Reset Tailwind defaults */
+  --spacing-*: initial;
+  --color-*: initial;
+  --font-size-*: initial;
+  --font-family-*: initial;
+  --font-weight-*: initial;
+  --line-height-*: initial;
+  --letter-spacing-*: initial;
+  --border-radius-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --breakpoint-*: initial;
+
+  --default-transition-duration: 0.15s;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Spacing (tight for desktop app) ── */
+  --spacing-0: 0;
+  --spacing-1px: 1px;
+  --spacing-2xs: 2px;
+  --spacing-xs: 4px;
+  --spacing-sm: 6px;
+  --spacing-md: 8px;
+  --spacing-lg: 12px;
+  --spacing-xl: 16px;
+  --spacing-2xl: 20px;
+  --spacing-3xl: 24px;
+  --spacing-4xl: 32px;
+  --spacing-5xl: 48px;
+
+  /* ── Border Radius ── */
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+
+  /* ── Font Family ── */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+
+  /* ── Font Size ── */
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-md: 13px;
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 22px;
+  --font-size-2xl: 24px;
+
+  /* ── Font Weight ── */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ── Line Height ── */
+  --line-height-tight: 1;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* ── Shadow ── */
+  --shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.5);
+  --shadow-thumb: 0 1px 3px rgba(0, 0, 0, 0.3);
+
+  /* ── Colors (Tier 3: Tailwind bridge → Tier 2 theme vars) ── */
+  --color-base: var(--theme-bg-primary);
+  --color-base-alt: var(--theme-bg-secondary);
+  --color-surface: var(--theme-bg-surface);
+  --color-fg: var(--theme-text-primary);
+  --color-muted: var(--theme-text-secondary);
+  --color-accent: var(--theme-accent);
+  --color-accent-subtle: var(--theme-accent-subtle);
+  --color-edge: var(--theme-border);
+  --color-danger: var(--theme-danger);
+  --color-on-accent: var(--theme-on-accent);
+  --color-overlay: var(--theme-hover-overlay);
+  --color-selection: var(--theme-selection);
+}
+
+/* ── Tier 1: Palette (Catppuccin Mocha) ── */
+:root {
+  --palette-bg: #1e1e2e;
+  --palette-bg-alt: #181825;
+  --palette-surface: #313244;
+  --palette-fg: #cdd6f4;
+  --palette-fg-muted: #a6adc8;
+  --palette-border: #45475a;
+  --palette-accent: #89b4fa;
+  --palette-accent-subtle: #45475a;
+  --palette-danger: #f38ba8;
+  --palette-on-accent: #1e1e2e;
+  --palette-hover: #45475a;
+  --palette-selection: #585b70;
+}
+
+/* ── Tier 2: Theme (semantic mappings) ── */
+:root {
+  --theme-bg-primary: var(--palette-bg);
+  --theme-bg-secondary: var(--palette-bg-alt);
+  --theme-bg-surface: var(--palette-surface);
+  --theme-text-primary: var(--palette-fg);
+  --theme-text-secondary: var(--palette-fg-muted);
+  --theme-accent: var(--palette-accent);
+  --theme-accent-subtle: var(--palette-accent-subtle);
+  --theme-border: var(--palette-border);
+  --theme-danger: var(--palette-danger);
+  --theme-on-accent: var(--palette-on-accent);
+  --theme-hover-overlay: var(--palette-hover);
+  --theme-selection: var(--palette-selection);
+
+  --sidebar-width: 280px;
+  --toolbar-height: 44px;
+}

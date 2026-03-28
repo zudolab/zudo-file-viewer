@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--theme-border) transparent;
+  }
+}

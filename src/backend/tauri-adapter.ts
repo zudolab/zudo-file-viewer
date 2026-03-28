@@ -1,0 +1,49 @@
+import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
+import type { BackendAPI } from "./types";
+import type { AppSettings, FileEntry, FileInfo } from "@/types";
+
+export function createTauriAdapter(): BackendAPI {
+  return {
+    files: {
+      listDirectory: (path: string) =>
+        invoke<FileEntry[]>("list_directory", { path }),
+      getFileInfo: (path: string) =>
+        invoke<FileInfo>("get_file_info", { path }),
+      watchDirectory: (path: string) =>
+        invoke<void>("watch_directory", { path }),
+      unwatchDirectory: () => invoke<void>("unwatch_directory"),
+      onDirectoryChanged: (cb: () => void) => {
+        let unlisten: (() => void) | null = null;
+        listen("directory:changed", () => cb()).then((u) => {
+          unlisten = u;
+        });
+        return () => {
+          unlisten?.();
+        };
+      },
+    },
+    images: {
+      getThumbnail: (path: string, size: number) =>
+        invoke<string>("get_thumbnail", { path, size }),
+      getImageData: (path: string) =>
+        invoke<string>("get_image_data", { path }),
+      getImageDimensions: (path: string) =>
+        invoke<{ width: number; height: number }>("get_image_dimensions", {
+          path,
+        }),
+    },
+    settings: {
+      get: () => invoke<AppSettings | null>("get_settings"),
+      save: (settings: AppSettings) =>
+        invoke<boolean>("save_settings", { settings }),
+    },
+    dialog: {
+      openDirectory: async () => {
+        const { open } = await import("@tauri-apps/plugin-dialog");
+        const result = await open({ directory: true });
+        return result ?? null;
+      },
+    },
+  };
+}
