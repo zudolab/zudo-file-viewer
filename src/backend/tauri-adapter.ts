@@ -7,8 +7,16 @@ import type { AppSettings, FileEntry, FileInfo } from "@/types";
 export function createTauriAdapter(): BackendAPI {
   return {
     files: {
-      listDirectory: (path: string) =>
-        invoke<FileEntry[]>("list_directory", { path }),
+      listDirectory: (
+        path: string,
+        options?: { showHidden?: boolean; sortBy?: string; sortOrder?: string },
+      ) =>
+        invoke<FileEntry[]>("list_directory", {
+          path,
+          showHidden: options?.showHidden,
+          sortBy: options?.sortBy,
+          sortOrder: options?.sortOrder,
+        }),
       getFileInfo: (path: string) =>
         invoke<FileInfo>("get_file_info", { path }),
       watchDirectory: (path: string) =>

@@ -35,7 +35,7 @@ vi.mock("@/backend", () => ({
 vi.mock("@/settings-context", () => ({
   useSettings: () => ({
     rootDirectory: "/mock",
-    showHiddenFiles: false,
+    showHidden: false,
     sortBy: "name" as const,
     sortOrder: "asc" as const,
     thumbnailSize: 120,

@@ -267,7 +267,7 @@ function NodeList({
   forceOpen: boolean;
 }) {
   return (
-    <>
+    <ul role={depth === 0 ? "tree" : "group"} className="list-none p-0 m-0">
       {nodes.map((node, index) => {
         const isLast = index === nodes.length - 1;
         return node.fileType === "directory" ? (
@@ -293,7 +293,7 @@ function NodeList({
           />
         );
       })}
-    </>
+    </ul>
   );
 }
 

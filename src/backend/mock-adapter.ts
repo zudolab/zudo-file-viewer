@@ -117,7 +117,7 @@ let mockSettings: AppSettings = { ...defaultSettings, rootDirectory: "/mock" };
 export function createMockAdapter(): BackendAPI {
   return {
     files: {
-      listDirectory: async (path: string) => {
+      listDirectory: async (path: string, _options?: { showHidden?: boolean; sortBy?: string; sortOrder?: string }) => {
         await delay(100);
         if (path === "/mock/photos") return MOCK_SUBDIR_FILES;
         if (path === "/mock/documents") return [];

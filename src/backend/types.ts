@@ -9,7 +9,10 @@ export type ImageDataResponse =
 
 export interface BackendAPI {
   files: {
-    listDirectory: (path: string) => Promise<FileEntry[]>;
+    listDirectory: (
+      path: string,
+      options?: { showHidden?: boolean; sortBy?: string; sortOrder?: string },
+    ) => Promise<FileEntry[]>;
     getFileInfo: (path: string) => Promise<FileInfo>;
     watchDirectory: (path: string) => Promise<void>;
     unwatchDirectory: () => Promise<void>;
