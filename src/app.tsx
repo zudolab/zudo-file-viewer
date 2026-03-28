@@ -41,6 +41,8 @@ function AppContent() {
             currentDir={currentDir}
             entries={entries}
             viewMode={settings.viewMode}
+            onDirectoryChange={setCurrentDir}
+            onSelect={setSelectedPath}
           />
         </div>
       </div>
