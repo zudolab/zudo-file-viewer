@@ -32,6 +32,8 @@ vi.mock("@/backend", () => ({
   initBackend: vi.fn(),
 }));
 
+const mockUpdateSettings = vi.fn().mockResolvedValue(undefined);
+
 vi.mock("@/settings-context", () => ({
   useSettings: () => ({
     rootDirectory: "/mock",
@@ -41,6 +43,7 @@ vi.mock("@/settings-context", () => ({
     viewMode: "grid" as const,
     thumbnailSize: 120,
   }),
+  useSettingsUpdate: () => mockUpdateSettings,
 }));
 
 const makeEntry = (overrides: Partial<FileEntry>): FileEntry => ({
@@ -70,6 +73,44 @@ describe("Viewer", () => {
       />,
     );
     expect(screen.getByText("Select a file to preview")).toBeTruthy();
+  });
+
+  it("shows thumbnail size slider when grid is displayed", () => {
+    const entries = [
+      makeEntry({ name: "photo.jpg", path: "/mock/photo.jpg", extension: "jpg", isImage: true }),
+    ];
+    render(
+      <Viewer
+        selectedFile={null}
+        currentDir="/mock"
+        entries={entries}
+        viewMode="grid"
+      />,
+    );
+    const slider = screen.getByRole("slider");
+    expect(slider).toBeTruthy();
+    expect(slider.getAttribute("min")).toBe("80");
+    expect(slider.getAttribute("max")).toBe("240");
+    expect(slider.getAttribute("step")).toBe("8");
+    expect(screen.getByText("120px")).toBeTruthy();
+  });
+
+  it("does not show slider when image preview is displayed", () => {
+    const imageFile = makeEntry({
+      name: "landscape.jpg",
+      path: "/mock/landscape.jpg",
+      extension: "jpg",
+      isImage: true,
+    });
+    render(
+      <Viewer
+        selectedFile={imageFile}
+        currentDir="/mock"
+        entries={[imageFile]}
+        viewMode="grid"
+      />,
+    );
+    expect(screen.queryByRole("slider")).toBeNull();
   });
 
   it("shows thumbnail grid when no file selected but entries exist", () => {
