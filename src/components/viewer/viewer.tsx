@@ -1,30 +1,81 @@
 import type { FileEntry } from "@/types";
+import { useSettings } from "@/settings-context";
+import ImagePreview from "./image-preview";
+import FileInfo from "./file-info";
+import ThumbnailGrid from "@/components/thumbnail-grid";
+
+const NOOP = () => {};
 
 export interface ViewerProps {
   selectedFile: FileEntry | null;
   currentDir: string;
   entries: FileEntry[];
   viewMode: "grid" | "list";
+  onDirectoryChange?: (path: string) => void;
+  onSelect?: (path: string) => void;
 }
 
-export default function Viewer(props: ViewerProps) {
+export default function Viewer({
+  selectedFile,
+  currentDir: _currentDir,
+  entries,
+  viewMode: _viewMode,
+  onDirectoryChange = NOOP,
+  onSelect = NOOP,
+}: ViewerProps) {
+  const settings = useSettings();
+
+  if (!selectedFile) {
+    if (entries.length === 0) {
+      return (
+        <div className="flex h-full items-center justify-center">
+          <p className="text-sm text-muted">Select a file to preview</p>
+        </div>
+      );
+    }
+
+    return (
+      <ThumbnailGrid
+        entries={entries}
+        selectedPath={null}
+        onSelect={onSelect}
+        onDirectoryChange={onDirectoryChange}
+        thumbnailSize={settings.thumbnailSize}
+      />
+    );
+  }
+
+  if (selectedFile.fileType === "directory") {
+    return (
+      <ThumbnailGrid
+        entries={entries}
+        selectedPath={selectedFile.path}
+        onSelect={onSelect}
+        onDirectoryChange={onDirectoryChange}
+        thumbnailSize={settings.thumbnailSize}
+      />
+    );
+  }
+
+  if (selectedFile.isImage) {
+    return (
+      <ImagePreview
+        filePath={selectedFile.path}
+        fileName={selectedFile.name}
+        extension={selectedFile.extension}
+        fileSize={selectedFile.size}
+        isHeic={selectedFile.isHeic}
+      />
+    );
+  }
+
   return (
-    <div className="flex h-full items-center justify-center">
-      {props.selectedFile ? (
-        <div className="text-center text-muted">
-          <p className="text-sm">Viewing: {props.selectedFile.name}</p>
-          <p className="text-xs">{props.selectedFile.path}</p>
-        </div>
-      ) : (
-        <div className="text-center text-muted">
-          <p className="text-sm">
-            {props.entries.length > 0
-              ? `${props.entries.length} items in ${props.currentDir}`
-              : "Select a file to preview"}
-          </p>
-          <p className="mt-sm text-xs">View: {props.viewMode}</p>
-        </div>
-      )}
-    </div>
+    <FileInfo
+      fileName={selectedFile.name}
+      filePath={selectedFile.path}
+      extension={selectedFile.extension}
+      fileSize={selectedFile.size}
+      modifiedAt={selectedFile.modifiedAt}
+    />
   );
 }
