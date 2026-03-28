@@ -5,14 +5,20 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "// ── Dev ──────────────────────────────────────────": "",
+    "predev": "lsof -ti :1420,:1421 | xargs kill 2>/dev/null; true",
     "dev": "vite",
     "dev:mock": "vite --config vite.config.mock.ts",
+    "// ── Build ────────────────────────────────────────": "",
     "build": "vite build",
     "preview": "vite preview",
+    "// ── Test ─────────────────────────────────────────": "",
     "test": "vitest run",
     "test:watch": "vitest",
+    "// ── Tauri ────────────────────────────────────────": "",
     "tauri:dev": "cargo tauri dev",
     "tauri:build": "cargo tauri build",
+    "// ── Quality ──────────────────────────────────────": "",
     "b4push": "./scripts/run-b4push.sh"
   },
   "dependencies": {
