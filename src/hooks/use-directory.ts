@@ -2,7 +2,17 @@ import { useState, useEffect, useCallback } from "react";
 import type { FileEntry } from "@/types";
 import { getBackend } from "@/backend";
 
+const MAX_CACHE_SIZE = 50;
 const directoryCache = new Map<string, FileEntry[]>();
+
+function cacheSet(key: string, value: FileEntry[]) {
+  if (directoryCache.size >= MAX_CACHE_SIZE) {
+    // Evict oldest entry (first key in Map iteration order)
+    const oldest = directoryCache.keys().next().value;
+    if (oldest !== undefined) directoryCache.delete(oldest);
+  }
+  directoryCache.set(key, value);
+}
 
 interface UseDirectoryResult {
   entries: FileEntry[];
@@ -34,7 +44,7 @@ export function useDirectory(path: string): UseDirectoryResult {
       .files.listDirectory(path)
       .then((result) => {
         if (cancelled) return;
-        directoryCache.set(path, result);
+        cacheSet(path, result);
         setEntries(result);
       })
       .catch((e) => {
@@ -59,7 +69,7 @@ export function useDirectory(path: string): UseDirectoryResult {
     getBackend()
       .files.listDirectory(path)
       .then((result) => {
-        directoryCache.set(path, result);
+        cacheSet(path, result);
         setEntries(result);
       })
       .catch((e) => {

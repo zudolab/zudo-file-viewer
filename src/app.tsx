@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { SettingsProvider, useSettings } from "@/settings-context";
 import { FileTree } from "@/components/file-tree";
 import { Viewer } from "@/components/viewer";
@@ -13,6 +13,15 @@ function AppContent() {
     settings.rootDirectory || "/",
   );
   const { entries } = useDirectory(currentDir);
+
+  // Sync currentDir when settings.rootDirectory becomes available after async load
+  const initialSyncDone = useRef(false);
+  useEffect(() => {
+    if (!initialSyncDone.current && settings.rootDirectory) {
+      initialSyncDone.current = true;
+      setCurrentDir(settings.rootDirectory);
+    }
+  }, [settings.rootDirectory]);
 
   const handleFileSelect = useCallback(
     (path: string) => {
