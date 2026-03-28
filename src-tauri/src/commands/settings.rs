@@ -12,15 +12,6 @@ fn settings_path() -> PathBuf {
     config_dir.join("settings.json")
 }
 
-fn mtime_ms(path: &PathBuf) -> u64 {
-    fs::metadata(path)
-        .and_then(|m| m.modified())
-        .ok()
-        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
-        .map(|d| d.as_millis() as u64)
-        .unwrap_or(0)
-}
-
 /// Default settings generated when no settings file exists yet.
 fn default_settings() -> serde_json::Value {
     serde_json::json!({
@@ -34,7 +25,7 @@ fn default_settings() -> serde_json::Value {
 #[tauri::command]
 pub fn get_settings(state: State<'_, AppState>) -> Result<serde_json::Value, String> {
     let path = settings_path();
-    let current_mtime = mtime_ms(&path);
+    let current_mtime = super::mtime_ms(&path);
 
     let stored_mtime = state
         .settings_mtime
@@ -65,7 +56,7 @@ pub fn get_settings(state: State<'_, AppState>) -> Result<serde_json::Value, Str
         fs::write(&path, &content)
             .map_err(|e| format!("Failed to write default settings: {}", e))?;
 
-        let new_mtime = mtime_ms(&path);
+        let new_mtime = super::mtime_ms(&path);
         if let Ok(mut cache) = state.settings_cache.lock() {
             *cache = Some(defaults.clone());
         }
@@ -110,7 +101,7 @@ pub fn save_settings(
         .map_err(|e| format!("Failed to serialize settings: {}", e))?;
     fs::write(&path, &content).map_err(|e| format!("Failed to write settings: {}", e))?;
 
-    let new_mtime = mtime_ms(&path);
+    let new_mtime = super::mtime_ms(&path);
     if let Ok(mut cache) = state.settings_cache.lock() {
         *cache = Some(settings);
     }

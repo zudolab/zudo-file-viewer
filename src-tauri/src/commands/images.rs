@@ -24,15 +24,6 @@ pub enum ImageDataResponse {
     Base64 { data: String },
 }
 
-fn mtime_ms(path: &Path) -> u64 {
-    std::fs::metadata(path)
-        .and_then(|m| m.modified())
-        .ok()
-        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
-        .map(|d| d.as_millis() as u64)
-        .unwrap_or(0)
-}
-
 /// Build a thumbnail cache key that includes the file's mtime, so the cache is
 /// automatically invalidated when the source file changes.
 pub fn thumbnail_cache_key(path: &str, size: u32, mtime: u64) -> String {
@@ -56,7 +47,7 @@ pub fn get_thumbnail(
     }
 
     // Use mtime in cache key so stale thumbnails are regenerated
-    let mtime = mtime_ms(img_path);
+    let mtime = super::mtime_ms(img_path);
     let cache_key = thumbnail_cache_key(path, size, mtime);
     let cache_path = state.thumbnail_cache_dir.join(format!("{}.png", cache_key));
 
@@ -168,23 +159,32 @@ fn convert_heic_to_base64(path: &str) -> Result<String, String> {
             Ok(format!("data:image/png;base64,{}", b64))
         }
         Err(_) => {
-            // Fallback: try heif-convert CLI tool (from libheif-examples)
+            // Fallback: try heif-convert CLI tool (from libheif-examples).
+            // Use a unique temp path per call to avoid races with concurrent requests.
+            let nanos = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_nanos())
+                .unwrap_or(0);
+            let temp_path = std::env::temp_dir().join(format!("zudo-fv-heic-{}.png", nanos));
+            let temp_str = temp_path.to_string_lossy().to_string();
+
             let output = std::process::Command::new("heif-convert")
-                .args([path, "/tmp/zudo-fv-heic-temp.png"])
+                .args([path, &temp_str])
                 .output();
 
             match output {
                 Ok(out) if out.status.success() => {
-                    let data = std::fs::read("/tmp/zudo-fv-heic-temp.png")
+                    let data = std::fs::read(&temp_path)
                         .map_err(|e| format!("Failed to read converted file: {}", e))?;
-                    std::fs::remove_file("/tmp/zudo-fv-heic-temp.png").ok();
+                    std::fs::remove_file(&temp_path).ok();
                     let b64 = base64::engine::general_purpose::STANDARD.encode(&data);
                     Ok(format!("data:image/png;base64,{}", b64))
                 }
-                _ => Err(
-                    "HEIC decoding not available. Install libheif-examples (heif-convert) for HEIC support."
-                        .to_string(),
-                ),
+                _ => {
+                    std::fs::remove_file(&temp_path).ok();
+                    Err("HEIC decoding not available. Install libheif-examples (heif-convert) for HEIC support."
+                        .to_string())
+                }
             }
         }
     }
