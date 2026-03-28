@@ -21,7 +21,9 @@ export function useDirectoryWatcher(
 
     setHasChanges(false);
 
-    getBackend().files.watchDirectory(currentDir);
+    getBackend().files.watchDirectory(currentDir).catch(() => {
+      // Watch may fail for permission errors or invalid paths — ignore silently
+    });
     const unsubscribe = getBackend().files.onDirectoryChanged(() => {
       setHasChanges(true);
     });

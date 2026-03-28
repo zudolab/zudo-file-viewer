@@ -13,7 +13,7 @@ interface ToastProps {
 export function Toast({ message, actions, onDismiss }: ToastProps) {
   return (
     <div
-      className="animate-toast-slide-in fixed top-xl left-1/2 z-50 flex items-center gap-md rounded-lg border border-edge bg-surface px-lg py-md shadow-dialog"
+      className="animate-toast-slide-in fixed top-xl left-1/2 z-50 -translate-x-1/2 flex items-center gap-md rounded-lg border border-edge bg-surface px-lg py-md shadow-dialog"
       role="status"
       aria-live="polite"
     >
